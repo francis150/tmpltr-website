@@ -6,6 +6,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
   title: 'Tmpltr - Pricing',
   description: 'Simple, transparent pricing for Tmpltr',
+  icons: {
+    icon: '/icon.png',
+  },
 }
 
 export default function RootLayout({ children }) {
