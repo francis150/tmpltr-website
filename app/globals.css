@@ -157,8 +157,14 @@ body {
 .plan-name {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   color: var(--text);
+}
+
+.plan-description {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
 
 .plan-price {

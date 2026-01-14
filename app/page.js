@@ -3,6 +3,7 @@ import Image from 'next/image'
 const plans = [
   {
     name: 'Free',
+    description: 'Test drive before you commit',
     price: '$0',
     period: '',
     credits: '100',
@@ -11,6 +12,7 @@ const plans = [
   },
   {
     name: 'Starter',
+    description: 'For small businesses managing their own site',
     price: '$29',
     period: '/mo',
     credits: '400',
@@ -19,6 +21,7 @@ const plans = [
   },
   {
     name: 'Pro',
+    description: 'For freelancers and SEO professionals',
     price: '$99',
     period: '/mo',
     credits: '1,500',
@@ -27,6 +30,7 @@ const plans = [
   },
   {
     name: 'Agency',
+    description: 'For agencies scaling client work',
     price: '$179',
     period: '/mo',
     credits: '10,000',
@@ -63,6 +67,7 @@ export default function Home() {
               <div key={plan.name} className={`pricing-card ${plan.featured ? 'featured' : ''}`}>
                 {plan.featured && <span className="badge">Popular</span>}
                 <h3 className="plan-name">{plan.name}</h3>
+                <p className="plan-description">{plan.description}</p>
                 <div className="plan-price">
                   {plan.price}
                   {plan.period && <span>{plan.period}</span>}
