@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 
 const plans = [
   {
@@ -9,6 +12,7 @@ const plans = [
     credits: '100',
     pages: '5-6',
     featured: false,
+    url: null,
   },
   {
     name: 'Starter',
@@ -18,6 +22,7 @@ const plans = [
     credits: '400',
     pages: '20-26',
     featured: false,
+    url: 'https://gumroad.com/checkout?product=koiqm&option=cT7H3rHzH2Eo1WQKlJPakA%3D%3D&recurrence=monthly&quantity=1&wanted=true',
   },
   {
     name: 'Pro',
@@ -27,6 +32,7 @@ const plans = [
     credits: '1,500',
     pages: '75-100',
     featured: true,
+    url: 'https://gumroad.com/checkout?product=koiqm&option=UhAhMqE3CLTgq9AmYLKCvQ%3D%3D&recurrence=monthly&quantity=1&wanted=true',
   },
   {
     name: 'Agency',
@@ -36,10 +42,20 @@ const plans = [
     credits: '10,000',
     pages: '500-666',
     featured: false,
+    url: 'https://gumroad.com/checkout?product=koiqm&option=DooCaZ7taIAhwZy6mbI9aA%3D%3D&recurrence=monthly&quantity=1&wanted=true',
   },
 ]
 
+const topUpUrl = 'https://tmpltr.gumroad.com/l/tmpltr-credit?wanted=true'
+
 export default function Home() {
+  const searchParams = useSearchParams()
+  const email = searchParams.get('email')
+
+  const getCheckoutUrl = (baseUrl) => {
+    if (!baseUrl) return null
+    return email ? `${baseUrl}&email=${encodeURIComponent(email)}` : baseUrl
+  }
   return (
     <main>
       <header className="header">
@@ -81,9 +97,18 @@ export default function Home() {
                     <strong>{plan.pages}</strong> est. pages
                   </li>
                 </ul>
-                <button className={`plan-btn ${plan.featured ? 'plan-btn-primary' : 'plan-btn-outline'}`}>
-                  {plan.price === '$0' ? 'Download' : 'Get Started'}
-                </button>
+                {plan.url ? (
+                  <a
+                    href={getCheckoutUrl(plan.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`plan-btn ${plan.featured ? 'plan-btn-primary' : 'plan-btn-outline'}`}
+                  >
+                    Get Started
+                  </a>
+                ) : (
+                  <button className="plan-btn plan-btn-outline">Download</button>
+                )}
               </div>
             ))}
           </div>
@@ -98,7 +123,14 @@ export default function Home() {
                 <span className="credits-amount">100 credits</span>
                 <span className="credits-price">$12</span>
               </div>
-              <button className="plan-btn plan-btn-outline">Buy Now</button>
+              <a
+                href={getCheckoutUrl(topUpUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="plan-btn plan-btn-outline"
+              >
+                Buy Now
+              </a>
             </div>
           </div>
         </div>
