@@ -11,7 +11,7 @@ const plans = [
   },
   {
     name: 'Starter',
-    price: '$19',
+    price: '$29',
     period: '/mo',
     credits: '400',
     pages: '20-26',
@@ -19,7 +19,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$79',
+    price: '$99',
     period: '/mo',
     credits: '1,500',
     pages: '75-100',
@@ -27,7 +27,7 @@ const plans = [
   },
   {
     name: 'Agency',
-    price: '$199',
+    price: '$179',
     period: '/mo',
     credits: '10,000',
     pages: '500-666',
@@ -91,7 +91,7 @@ export default function Home() {
               </div>
               <div className="credits-offer">
                 <span className="credits-amount">100 credits</span>
-                <span className="credits-price">$10</span>
+                <span className="credits-price">$12</span>
               </div>
               <button className="plan-btn plan-btn-outline">Buy Now</button>
             </div>
