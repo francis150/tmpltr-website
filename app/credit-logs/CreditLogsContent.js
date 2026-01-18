@@ -10,24 +10,27 @@ export default function CreditLogsContent() {
   const [pagination, setPagination] = useState(null)
   const [error, setError] = useState(null)
   const [hoveredBalanceId, setHoveredBalanceId] = useState(null)
+  const [authToken, setAuthToken] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     const hash = window.location.hash
     const params = new URLSearchParams(hash.slice(1))
-    const authToken = params.get('auth_token')
+    const token = params.get('auth_token')
 
-    if (!authToken) {
+    if (!token) {
       setStatus('no_token')
       return
     }
 
-    fetchCreditLogs(authToken)
+    setAuthToken(token)
+    fetchCreditLogs(token, 1)
   }, [])
 
-  const fetchCreditLogs = async (token) => {
+  const fetchCreditLogs = async (token, page = 1) => {
     try {
       const response = await fetch(
-        `${config.serverUrl}${config.endpoints.creditLogs}`,
+        `${config.serverUrl}${config.endpoints.creditLogs}?page=${page}`,
         {
           method: 'GET',
           headers: {
@@ -66,6 +69,7 @@ export default function CreditLogsContent() {
 
       setLogs(logData)
       setPagination(paginationData)
+      setCurrentPage(paginationData.page)
       setStatus('success')
     } catch (err) {
       if (err.name === 'TypeError') {
@@ -103,6 +107,11 @@ export default function CreditLogsContent() {
 
   const getBalance = (log) => {
     return (log.subscription_balance_after + log.purchased_balance_after).toLocaleString()
+  }
+
+  const handlePageChange = (page) => {
+    setStatus('loading')
+    fetchCreditLogs(authToken, page)
   }
 
   const renderHeader = () => (
@@ -254,10 +263,32 @@ export default function CreditLogsContent() {
             </table>
           </div>
 
-          {pagination && (
-            <p className="logs-pagination">
-              Showing {logs.length} of {pagination.total} transactions
-            </p>
+          {pagination && pagination.totalPages > 1 && (
+            <div className="logs-pagination">
+              <button
+                className="pagination-btn"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                Previous
+              </button>
+              <span className="pagination-info">
+                Page {currentPage} of {pagination.totalPages}
+              </span>
+              <button
+                className="pagination-btn"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={!pagination.hasMore}
+              >
+                Next
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
       </section>
