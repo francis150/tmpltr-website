@@ -9,6 +9,7 @@ export default function CreditLogsContent() {
   const [logs, setLogs] = useState([])
   const [pagination, setPagination] = useState(null)
   const [error, setError] = useState(null)
+  const [hoveredBalanceId, setHoveredBalanceId] = useState(null)
 
   useEffect(() => {
     const hash = window.location.hash
@@ -207,21 +208,48 @@ export default function CreditLogsContent() {
                 </tr>
               </thead>
               <tbody>
-                {logs.map((log) => (
-                  <tr key={log.id}>
-                    <td data-label="Date">{formatDate(log.created_at)}</td>
-                    <td data-label="Description">{log.description}</td>
-                    <td data-label="Type">
-                      <span className={`type-badge type-${log.transaction_type}`}>
-                        {formatType(log.transaction_type)}
-                      </span>
-                    </td>
-                    <td data-label="Credits" className={log.amount >= 0 ? 'credit-positive' : 'credit-negative'}>
-                      {formatCredits(log.amount)}
-                    </td>
-                    <td data-label="Balance">{getBalance(log)}</td>
-                  </tr>
-                ))}
+                {logs.map((log, index) => {
+                  const isNearBottom = index >= logs.length - 2
+                  return (
+                    <tr key={log.id}>
+                      <td data-label="Date">{formatDate(log.created_at)}</td>
+                      <td data-label="Description">{log.description}</td>
+                      <td data-label="Type">
+                        <span className={`type-badge type-${log.transaction_type}`}>
+                          {formatType(log.transaction_type)}
+                        </span>
+                      </td>
+                      <td data-label="Credits" className={log.amount >= 0 ? 'credit-positive' : 'credit-negative'}>
+                        {formatCredits(log.amount)}
+                      </td>
+                      <td data-label="Balance" className="balance-cell">
+                        <div
+                          className="balance-wrapper"
+                          onMouseEnter={() => setHoveredBalanceId(log.id)}
+                          onMouseLeave={() => setHoveredBalanceId(null)}
+                        >
+                          <span className="balance-value">{getBalance(log)}</span>
+                          {hoveredBalanceId === log.id && (
+                            <div className={`balance-tooltip${isNearBottom ? ' tooltip-above' : ''}`}>
+                              <div className="balance-tooltip-row">
+                                <span className="balance-tooltip-label">Subscription</span>
+                                <span className="balance-tooltip-value tooltip-subscription">
+                                  {log.subscription_balance_after.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className="balance-tooltip-row">
+                                <span className="balance-tooltip-label">Purchased</span>
+                                <span className="balance-tooltip-value tooltip-purchased">
+                                  {log.purchased_balance_after.toLocaleString()}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

@@ -556,6 +556,92 @@ body {
   max-width: 400px;
 }
 
+/* Balance Tooltip */
+.balance-cell {
+  position: relative;
+}
+
+.balance-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: default;
+}
+
+.balance-value {
+  border-bottom: 1px dashed var(--text-muted);
+  padding-bottom: 2px;
+}
+
+.balance-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  min-width: 180px;
+  z-index: 100;
+  animation: tooltipFadeIn 0.15s ease;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.balance-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.balance-tooltip-row:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.balance-tooltip-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.balance-tooltip-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.tooltip-subscription {
+  color: var(--accent);
+}
+
+.tooltip-purchased {
+  color: #4ade80;
+}
+
+.balance-tooltip.tooltip-above {
+  top: auto;
+  bottom: calc(100% + 8px);
+  animation: tooltipFadeInAbove 0.15s ease;
+}
+
+@keyframes tooltipFadeInAbove {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 768px) {
   .logs-table-container {
     overflow-x: auto;
@@ -630,5 +716,25 @@ body {
 
   .message-title {
     font-size: 1.5rem;
+  }
+
+  .balance-tooltip {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    bottom: 20px;
+    right: auto;
+  }
+
+  @keyframes tooltipFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   }
 }
