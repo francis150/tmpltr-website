@@ -47,6 +47,7 @@ const plans = [
 ]
 
 const topUpUrl = 'https://tmpltr.gumroad.com/l/tmpltr-credit?wanted=true'
+const downloadUrl = 'https://github.com/francis150/tmpltr/releases/latest/download/tmpltr.zip'
 
 export default function HomeContent() {
   const searchParams = useSearchParams()
@@ -62,14 +63,14 @@ export default function HomeContent() {
         <div className="container header-content">
           <div className="header-spacer" />
           <Image src="/logo.svg" alt="Tmpltr" width={180} height={60} className="logo" />
-          <button className="icon-btn">
+          <a href={downloadUrl} className="icon-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             Download
-          </button>
+          </a>
         </div>
       </header>
 
@@ -107,7 +108,7 @@ export default function HomeContent() {
                     Get Started
                   </a>
                 ) : (
-                  <button className="plan-btn plan-btn-outline">Download</button>
+                  <a href={downloadUrl} className="plan-btn plan-btn-outline">Download</a>
                 )}
               </div>
             ))}
