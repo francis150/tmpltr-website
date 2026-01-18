@@ -12,6 +12,9 @@ export default function CreditLogsContent() {
   const [hoveredBalanceId, setHoveredBalanceId] = useState(null)
   const [authToken, setAuthToken] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [filterType, setFilterType] = useState('all')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
 
   useEffect(() => {
     const hash = window.location.hash
@@ -27,10 +30,15 @@ export default function CreditLogsContent() {
     fetchCreditLogs(token, 1)
   }, [])
 
-  const fetchCreditLogs = async (token, page = 1) => {
+  const fetchCreditLogs = async (token, page = 1, filters = {}) => {
     try {
+      const params = new URLSearchParams({ page })
+      if (filters.type && filters.type !== 'all') params.append('type', filters.type)
+      if (filters.dateFrom) params.append('from', filters.dateFrom)
+      if (filters.dateTo) params.append('to', filters.dateTo)
+
       const response = await fetch(
-        `${config.serverUrl}${config.endpoints.creditLogs}?page=${page}`,
+        `${config.serverUrl}${config.endpoints.creditLogs}?${params}`,
         {
           method: 'GET',
           headers: {
@@ -111,8 +119,33 @@ export default function CreditLogsContent() {
 
   const handlePageChange = (page) => {
     setStatus('loading')
-    fetchCreditLogs(authToken, page)
+    fetchCreditLogs(authToken, page, { type: filterType, dateFrom, dateTo })
   }
+
+  const handleFilterChange = (key, value) => {
+    const newFilters = {
+      type: key === 'type' ? value : filterType,
+      dateFrom: key === 'dateFrom' ? value : dateFrom,
+      dateTo: key === 'dateTo' ? value : dateTo,
+    }
+
+    if (key === 'type') setFilterType(value)
+    if (key === 'dateFrom') setDateFrom(value)
+    if (key === 'dateTo') setDateTo(value)
+
+    setStatus('loading')
+    fetchCreditLogs(authToken, 1, newFilters)
+  }
+
+  const clearFilters = () => {
+    setFilterType('all')
+    setDateFrom('')
+    setDateTo('')
+    setStatus('loading')
+    fetchCreditLogs(authToken, 1)
+  }
+
+  const hasActiveFilters = filterType !== 'all' || dateFrom || dateTo
 
   const renderHeader = () => (
     <header className="header">
@@ -203,6 +236,50 @@ export default function CreditLogsContent() {
           <div className="logs-header">
             <h1 className="logs-title">Credit History</h1>
             <p className="logs-subtitle">Your credit usage and purchases</p>
+          </div>
+
+          <div className="logs-filters">
+            <div className="filter-group">
+              <label className="filter-label">Type</label>
+              <select
+                className="filter-select"
+                value={filterType}
+                onChange={(e) => handleFilterChange('type', e.target.value)}
+              >
+                <option value="all">All Types</option>
+                <option value="usage">Usage</option>
+                <option value="subscription">Subscription</option>
+                <option value="purchased">Purchase</option>
+              </select>
+            </div>
+
+            <div className="filters-right">
+              <div className="filter-group">
+                <label className="filter-label">From</label>
+                <input
+                  type="date"
+                  className="filter-input"
+                  value={dateFrom}
+                  onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+                />
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">To</label>
+                <input
+                  type="date"
+                  className="filter-input"
+                  value={dateTo}
+                  onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+                />
+              </div>
+
+              {hasActiveFilters && (
+                <button className="filter-clear" onClick={clearFilters}>
+                  Clear Filters
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="logs-table-container">
