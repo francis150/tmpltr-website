@@ -16,6 +16,7 @@ export default function CreditLogsContent() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [isListLoading, setIsListLoading] = useState(false)
+  const [hasLoadedData, setHasLoadedData] = useState(false)
 
   useEffect(() => {
     const hash = window.location.hash
@@ -72,12 +73,7 @@ export default function CreditLogsContent() {
 
       const { logs: logData, pagination: paginationData } = result.data
 
-      if (logData.length === 0) {
-        setStatus('empty')
-        setIsListLoading(false)
-        return
-      }
-
+      setHasLoadedData(true)
       setLogs(logData)
       setPagination(paginationData)
       setCurrentPage(paginationData.page)
@@ -211,7 +207,7 @@ export default function CreditLogsContent() {
     )
   }
 
-  if (status === 'empty') {
+  if (status === 'empty' && !hasLoadedData) {
     return (
       <main>
         {renderHeader()}
@@ -293,18 +289,28 @@ export default function CreditLogsContent() {
                 <div className="spinner" />
               </div>
             )}
-            <table className="logs-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Credits</th>
-                  <th>Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log, index) => {
+            {logs.length === 0 ? (
+              <div className="table-empty">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <p className="table-empty-text">No transactions found</p>
+                <p className="table-empty-subtext">Try adjusting your filters</p>
+              </div>
+            ) : (
+              <table className="logs-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Credits</th>
+                    <th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {logs.map((log, index) => {
                   const isNearBottom = index >= logs.length - 2
                   return (
                     <tr key={log.id}>
@@ -346,8 +352,9 @@ export default function CreditLogsContent() {
                     </tr>
                   )
                 })}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            )}
           </div>
 
           {pagination && pagination.totalPages > 1 && (
