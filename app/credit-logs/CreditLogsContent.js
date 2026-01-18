@@ -15,6 +15,7 @@ export default function CreditLogsContent() {
   const [filterType, setFilterType] = useState('all')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  const [isListLoading, setIsListLoading] = useState(false)
 
   useEffect(() => {
     const hash = window.location.hash
@@ -65,6 +66,7 @@ export default function CreditLogsContent() {
 
       if (!result.success || !result.data?.logs) {
         setStatus('empty')
+        setIsListLoading(false)
         return
       }
 
@@ -72,6 +74,7 @@ export default function CreditLogsContent() {
 
       if (logData.length === 0) {
         setStatus('empty')
+        setIsListLoading(false)
         return
       }
 
@@ -79,6 +82,7 @@ export default function CreditLogsContent() {
       setPagination(paginationData)
       setCurrentPage(paginationData.page)
       setStatus('success')
+      setIsListLoading(false)
     } catch (err) {
       if (err.name === 'TypeError') {
         setError('Unable to connect. Check your internet connection.')
@@ -86,6 +90,7 @@ export default function CreditLogsContent() {
         setError(err.message)
       }
       setStatus('error')
+      setIsListLoading(false)
     }
   }
 
@@ -118,7 +123,7 @@ export default function CreditLogsContent() {
   }
 
   const handlePageChange = (page) => {
-    setStatus('loading')
+    setIsListLoading(true)
     fetchCreditLogs(authToken, page, { type: filterType, dateFrom, dateTo })
   }
 
@@ -133,7 +138,7 @@ export default function CreditLogsContent() {
     if (key === 'dateFrom') setDateFrom(value)
     if (key === 'dateTo') setDateTo(value)
 
-    setStatus('loading')
+    setIsListLoading(true)
     fetchCreditLogs(authToken, 1, newFilters)
   }
 
@@ -141,7 +146,7 @@ export default function CreditLogsContent() {
     setFilterType('all')
     setDateFrom('')
     setDateTo('')
-    setStatus('loading')
+    setIsListLoading(true)
     fetchCreditLogs(authToken, 1)
   }
 
@@ -283,6 +288,11 @@ export default function CreditLogsContent() {
           </div>
 
           <div className="logs-table-container">
+            {isListLoading && (
+              <div className="table-loading-overlay">
+                <div className="spinner" />
+              </div>
+            )}
             <table className="logs-table">
               <thead>
                 <tr>
